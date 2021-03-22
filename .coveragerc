@@ -1,0 +1,3 @@
+[run]
+omit = 
+    sphinx_ast_autodoc/__init__.py
