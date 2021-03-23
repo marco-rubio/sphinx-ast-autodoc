@@ -4,6 +4,10 @@ import inspect
 import itertools
 import typing
 
+from sphinx.util import logging
+
+logger = logging.getLogger(__name__)
+
 
 def pad_defaults_list(defaults_list, expected_length):
     """Pads a defaults list to match the expected length"""
@@ -58,7 +62,8 @@ def get_default_value(
         value = node.value
 
     elif isinstance(node, ast.Name):
-        raise NotImplementedError(
+        value = inspect.Parameter.empty
+        logger.warning(
             "get_default_value got an ast.Name node which isn't yet supported"
         )
 
@@ -66,9 +71,8 @@ def get_default_value(
         value = inspect.Parameter.empty
 
     else:
-        raise ValueError(
-            f"get_default_value got an unsupported node of type {type(node)}"
-        )
+        value = inspect.Parameter.empty
+        logger.error(f"get_default_value got an unsupported node of type {type(node)}")
 
     return value
 
@@ -104,7 +108,8 @@ def get_annotation_value(node: typing.Union[ast.Name, ast.Constant, None]):
         value = annotation.id
 
     elif isinstance(annotation, ast.Subscript):
-        raise NotImplementedError(
+        value = inspect.Parameter.empty
+        logger.warning(
             "get_annotation_value got an ast.Subscript node which isn't supported yet"
         )
 
@@ -112,7 +117,8 @@ def get_annotation_value(node: typing.Union[ast.Name, ast.Constant, None]):
         value = inspect.Parameter.empty
 
     else:
-        raise ValueError(
+        value = inspect.Parameter.empty
+        logger.error(
             f"get_annotation_value got an unsupported node of type {type(node)}"
         )
 
@@ -168,12 +174,14 @@ def get_return_annotation(
         value = node.id
 
     elif isinstance(node, ast.Subscript):
-        raise NotImplementedError(
+        value = inspect.Signature.empty
+        logger.warning(
             "get_return_annotation got an ast.Subscript node which is not yet supported"
         )
 
     else:
-        raise ValueError(
+        value = inspect.Signature.empty
+        logger.error(
             f"get_return_annotation got an unsupported node of type {type(node)}"
         )
 
