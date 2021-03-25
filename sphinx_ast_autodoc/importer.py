@@ -1,4 +1,5 @@
 """Provides import utility functions"""
+import ast
 import os
 import sys
 import typing
@@ -39,3 +40,21 @@ def load_module_code(module_path: str, warning_is_error: bool = False) -> str:
         module_code = file.read()
 
     return module_code
+
+
+def import_module(
+    module_name: str, warningiserror: bool = False
+) -> typing.Optional[module_builder.Module]:
+    """Imports modules without executing them"""
+    #  pylint: disable=unused-argument
+
+    module_path = locate_module(module_name)
+    module_code = load_module_code(module_path)
+
+    try:
+        ast_module = ast.parse(module_code, filename=module_path)
+
+    except SyntaxError as error:
+        raise ImportError() from error
+
+    return module_builder.build_module(ast_module)
