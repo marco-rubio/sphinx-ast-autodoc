@@ -27,3 +27,15 @@ def locate_module(
         raise ImportError()
 
     return module_path
+
+
+def load_module_code(module_path: str, warning_is_error: bool = False) -> str:
+    """Loads the module code as a string"""
+    #  pylint: disable=unused-argument
+
+    module_code = ""
+
+    with open(module_path, "r") as file:
+        module_code = file.read()
+
+    return module_code
